@@ -600,7 +600,7 @@ QByteArray MainWindow::loadAccessToken(const AccountSettings& account)
 QByteArray MainWindow::loadAccessTokenFromKeyChain(const AccountSettings& account)
 {
     using namespace QKeychain;
-    auto lastError = Error::OtherError;
+    //auto lastError = Error::OtherError;
     bool legacyLocation = true;
     do {
         legacyLocation = !legacyLocation; // Start with non-legacy
@@ -637,36 +637,37 @@ QByteArray MainWindow::loadAccessTokenFromKeyChain(const AccountSettings& accoun
 
         qWarning().noquote() << "Could not read" << job->service()
                              << "from the keychain:" << job->errorString();
-        lastError = job->error();
+        //lastError = job->error();
     } while (!legacyLocation); // Exit once the legacy round is through
 
     // Try token file
     AccessTokenFile atf(account);
     const auto& accessToken = atf.readAll();
     // Only offer migration if QtKeychain is usable but doesn't have the entry
-    if (lastError == Error::EntryNotFound && !accessToken.isEmpty()
-        && QMessageBox::warning(
-               this, tr("Access token file found"),
-               tr("Do you want to migrate the access token for %1 "
-                  "from the file to the keychain?")
-                   .arg(account.userId()),
-               QMessageBox::Yes | QMessageBox::No)
-               == QMessageBox::Yes) {
-        qInfo() << "Migrating the access token for" << account.userId()
-                << "from the file to the keychain";
-        if (saveAccessTokenToKeyChain(account, accessToken, false)) {
-            if (!atf.remove())
-                qWarning()
-                    << "Could not remove the access token after migration";
-        } else {
-            qWarning() << "Migration of the access token failed";
-            QMessageBox::warning(this, tr("Couldn't migrate access token"),
-                tr("Quaternion couldn't migrate access token for %1 "
-                   "from the file to the keychain.")
-                    .arg(account.userId()),
-                QMessageBox::Close);
-        }
-    }
+    // QUERIA: Never ask for migration (AGAIN, but not imlementing that now)
+    // if (lastError == Error::EntryNotFound && !accessToken.isEmpty()
+    //     && QMessageBox::warning(
+    //            this, tr("Access token file found"),
+    //            tr("Do you want to migrate the access token for %1 "
+    //               "from the file to the keychain?")
+    //                .arg(account.userId()),
+    //            QMessageBox::Yes | QMessageBox::No)
+    //            == QMessageBox::Yes) {
+    //     qInfo() << "Migrating the access token for" << account.userId()
+    //             << "from the file to the keychain";
+    //     if (saveAccessTokenToKeyChain(account, accessToken, false)) {
+    //         if (!atf.remove())
+    //             qWarning()
+    //                 << "Could not remove the access token after migration";
+    //     } else {
+    //         qWarning() << "Migration of the access token failed";
+    //         QMessageBox::warning(this, tr("Couldn't migrate access token"),
+    //             tr("Quaternion couldn't migrate access token for %1 "
+    //                "from the file to the keychain.")
+    //                 .arg(account.userId()),
+    //             QMessageBox::Close);
+    //     }
+    // }
     return accessToken;
 }
 #endif
