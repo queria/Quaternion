@@ -249,6 +249,7 @@ Page {
                                               : ScrollBar.AsNeeded
             interactive: true
             active: true
+            width: 20
 //            background: Item { /* TODO: timeline map */ }
         }
 
@@ -443,7 +444,7 @@ Page {
 
         function onWheel(wheel) {
             if (wheel.angleDelta.x === 0) {
-                var yDelta = wheel.angleDelta.y * 10 / 36
+                var yDelta = wheel.angleDelta.y * 10 / 8
 
                 if (yDelta > 0)
                     scrollUp(yDelta)
