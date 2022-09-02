@@ -93,4 +93,5 @@ class ChatRoomWidget : public QWidget
         void keyPressEvent(QKeyEvent* event) override;
 
         int maximumChatEditHeight() const;
+	QString stripUsernameSuffix(QString userName) const;
 };

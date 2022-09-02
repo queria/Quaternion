@@ -699,6 +699,14 @@ void ChatRoomWidget::sendInput()
     m_chatEdit->saveInput();
 }
 
+QString ChatRoomWidget::stripUsernameSuffix(QString userName) const
+{
+    if (userName.endsWith(" (IRC)")) {
+        userName.chop(6);
+    }
+    return userName;
+}
+
 ChatRoomWidget::completions_t
 ChatRoomWidget::findCompletionMatches(const QString& pattern) const
 {
@@ -710,7 +718,7 @@ ChatRoomWidget::findCompletionMatches(const QString& pattern) const
             if (user->displayname(currentRoom())
                     .startsWith(pattern, Qt::CaseInsensitive)
                 || user->id().startsWith(pattern, Qt::CaseInsensitive))
-                matches.push_back({ user->displayname(currentRoom()),
+                matches.push_back({ stripUsernameSuffix(user->displayname(currentRoom())),
                                     Uri(user->id()).toUrl(Uri::MatrixToUri) });
         }
         std::sort(matches.begin(), matches.end(),
